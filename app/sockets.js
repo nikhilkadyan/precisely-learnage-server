@@ -23,8 +23,8 @@ module.exports = (io, streams) => {
         };
 
         // When user disconnect or leave
-        client.on('disconnect', leave(data));
-        client.on('leave', leave(data));
+        client.on('disconnect', leave);
+        client.on('leave', leave);
 
         client.on('message', function (details) {
             var otherClient = io.sockets.connected[details.to];
