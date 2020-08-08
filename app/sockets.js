@@ -22,13 +22,30 @@ module.exports = (io, streams) => {
             streams.removeStream(client.id);
         };
 
-        // When user disconnect or leave
+        // When broadcaster disconnect or leave
         client.on('disconnect', leave);
         client.on('leave', leave);
 
+        // Wacther join room
+        client("join-room", function(data){
+            client.join(data.roomID);
+            client.to(data.roomID).emit("user-joined", data);
+        });
+
+        // Watcher left the room
+        client.on("leave-room", function (data) {
+            client.to(data.roomID).emit("user-left", data);
+        });
+
+        // Message in room
+        client.on("message-room", function(data){
+            client.to(data.roomID).emit("new-message", data);
+        });
+
+        // Send message to single
         client.on('message', function (details) {
             var otherClient = io.sockets.connected[details.to];
-
+ 
             if (!otherClient) {
                 return;
             }
