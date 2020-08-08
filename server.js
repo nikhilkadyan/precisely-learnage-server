@@ -3,7 +3,7 @@ let socketIO = require("socket.io");
 let http = require("http");
 let bodyParser = require('body-parser')
 
-const DEFAULT_PORT = 5000;
+const DEFAULT_PORT = 3000;
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer);
