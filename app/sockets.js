@@ -27,7 +27,7 @@ module.exports = (io, streams) => {
         client.on('leave', leave);
 
         // Wacther join room
-        client("join-room", function(data){
+        client.on("join-room", function(data){
             client.join(data.roomID);
             client.to(data.roomID).emit("user-joined", data);
         });
