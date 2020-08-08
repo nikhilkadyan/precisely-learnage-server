@@ -3,28 +3,38 @@ module.exports = (io, streams) => {
 
     io.on("connection", (client) => {
         console.log("Socket Connected");
+        client.emit('id', client.id);
 
-        client.on("create-room", (room) => {
-            rooms.push(room);
-            client.broadcast("update-rooms", rooms);
+        // Broadcast started
+        client.on("readyToStream", (options) => {
+            console.log('-- ' + client.id + ' is ready to stream --');
+            streams.addStream(client.id, options.name);
         });
 
-        client.on("join", (user, room) => {
-            client.join(room.id);
-            client.to(room.id).emit("add-user", user);
+        // Update Stream
+        client.on('update', function (options) {
+            streams.update(client.id, options.name);
         });
 
-        client.on("leave", (user, room) => {
-            let currStream = streams.getStreams.filter(s => s.roomID = room.id);
-            if(currStream.id === client.id){
-                client.to(room.id).emit("stream-ended", null);
+        // Leave user logic
+        function leave() {
+            console.log('-- ' + client.id + ' left --');
+            streams.removeStream(client.id);
+        };
+
+        // When user disconnect or leave
+        client.on('disconnect', leave(data));
+        client.on('leave', leave(data));
+
+        client.on('message', function (details) {
+            var otherClient = io.sockets.connected[details.to];
+
+            if (!otherClient) {
+                return;
             }
-            client.to(room.id).emit("remove-user", user);
-        });
-
-        client.on("readyToStream", (data, room) => {
-            streams.addStream(client.id, data.name, room.id);
-            client.to(room.id).emit("stream-started", data);
+            delete details.to;
+            details.from = client.id;
+            otherClient.emit('message', details);
         });
 
     });

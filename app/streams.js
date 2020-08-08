@@ -1,34 +1,30 @@
-module.exports = () => {
+module.exports = function () {
     var streamList = [];
 
-    var Stream = function (id, name, roomID) {
-        this.id = id;
+    var Stream = function (id, name) {
         this.name = name;
-        this.roomID = roomID;
+        this.id = id;
     }
 
     return {
-        addStream : function (id, name, roomID){
-            currRoomStream = streamList.filter(s => s.roomID === roomID);
-            if(!currRoomStream){
-                var stream = new Stream(id, name, roomID);
-                streamList.push(stream);
-            } else {
-                streamList = streamList.filter(s => s.roomID === roomID)
-            }
-
+        addStream: function (id, name) {
+            var stream = new Stream(id, name);
+            streamList.push(stream);
         },
-        removeStream: function (roomID){
-            currRoomStream = streamList.filter(s => s.roomID === roomID);
-            if(currRoomStream){
-                streamList = streamList.filter(s => s.roomID === roomID)
+        removeStream: function (id) {
+            var index = 0;
+            while (index < streamList.length && streamList[index].id != id) {
+                index++;
             }
+            streamList.splice(index, 1);
         },
-        updateStream: function (roomID, name){
-            stream = streamList.finc(s => s.roomID === roomID);
+        update: function (id, name) {
+            var stream = streamList.find(function (element, i, array) {
+                return element.id == id;
+            });
             stream.name = name;
         },
-        getStreams: function (){
+        getStreams: function () {
             return streamList;
         }
     }
