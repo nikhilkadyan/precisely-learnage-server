@@ -1,10 +1,7 @@
 let express = require("express");
 let socketIO = require("socket.io");
-let http = require("http");
 
-const DEFAULT_PORT = 3000;
 const app = express();
-const httpServer = http.createServer(app);
 
 // Import Streams
 let streams = require('./app/streams');
@@ -13,8 +10,9 @@ app.get('/', (req, res) => {
     res.send('Hello!')
 });
 
-httpServer.listen(DEFAULT_PORT, () => console.log(`Listening on port ${DEFAULT_PORT}`));
+app.set('port', process.env.PORT || 3000);
+var server = app.listen(app.get('port'), () => console.log('Listening on port ' + app.get('port')));
 
 // Import Sockets
-const io = socketIO(httpServer);
+const io = socketIO(server);
 require('./app/sockets')(io, streams);
