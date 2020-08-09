@@ -27,19 +27,25 @@ module.exports = (io, streams) => {
         client.on('leave', leave);
 
         // Wacther join room
-        client.on("join-room", function(data){
-            client.join(data.roomID);
-            client.to(data.roomID).emit("user-joined", data);
+        client.on("join-room", async (data) => {
+            const roomID = await data.roomID;
+            client.join(roomID);
+            console.log(`Client ${client.id} has joined the room ${roomID}`);
+            io.to(roomID).emit("user-joined", data);
         });
 
         // Watcher left the room
-        client.on("leave-room", function (data) {
-            client.to(data.roomID).emit("user-left", data);
+        client.on("leave-room", async (data) => {
+            const roomID = await data.roomID;
+            console.log(`Client ${client.id} has left the room ${roomID}`);
+            io.to(roomID).emit("user-left", data);
         });
 
         // Message in room
         client.on("message-room", function(data){
-            client.to(data.roomID).emit("new-message", data);
+            const roomID = await data.roomID;
+            console.log(`Client ${client.id} has messaged in room ${roomID}`);
+            io.to(roomID).emit("new-message", data);
         });
 
         // Send message to single
