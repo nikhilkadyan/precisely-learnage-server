@@ -42,7 +42,7 @@ module.exports = (io, streams) => {
         });
 
         // Message in room
-        client.on("message-room", function(data){
+        client.on("message-room", async (data) => {
             const roomID = await data.roomID;
             console.log(`Client ${client.id} has messaged in room ${roomID}`);
             io.to(roomID).emit("new-message", data);
