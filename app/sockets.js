@@ -2,7 +2,7 @@ module.exports = (io, streams) => {
     let rooms = [];
 
     io.on("connection", (client) => {
-        console.log("Socket Connected");
+        console.log('-- ' + client.id + ' connected --');
         client.emit('id', client.id);
 
         // Broadcast started
@@ -30,21 +30,21 @@ module.exports = (io, streams) => {
         client.on("join-room", async (data) => {
             const roomID = await data.roomID;
             client.join(roomID);
-            console.log(`Client ${client.id} has joined the room ${roomID}`);
+            console.log('-- ' + client.id + ' joined room' + roomID + '--');
             io.to(roomID).emit("user-joined", data);
         });
 
         // Watcher left the room
         client.on("leave-room", async (data) => {
             const roomID = await data.roomID;
-            console.log(`Client ${client.id} has left the room ${roomID}`);
+            console.log('-- ' + client.id + ' left room' + roomID + '--');
             io.to(roomID).emit("user-left", data);
         });
 
         // Message in room
         client.on("message-room", async (data) => {
             const roomID = await data.roomID;
-            console.log(`Client ${client.id} has messaged in room ${roomID}`);
+            console.log('-- ' + client.id + ' messaged room' + roomID + '--');
             io.to(roomID).emit("new-message", data);
         });
 
