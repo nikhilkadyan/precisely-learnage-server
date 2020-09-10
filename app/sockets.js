@@ -60,5 +60,10 @@ module.exports = (io, streams) => {
             otherClient.emit('message', details);
         });
 
+        client.on('send-data', async (data) => {
+            const roomID = await data.roomID;
+            io.to(roomID).emit("recieved-data", data);
+        });
+
     });
 }
